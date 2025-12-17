@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seismic Systems: The Privacy Layer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        seismic: {
+                            // Using semi-transparent colors for glass effect
+                            card: 'rgba(30, 41, 59, 0.7)',     // Slate 800 with opacity
+                            text: '#f8fafc',     // Slate 50
+                            muted: '#cbd5e1',    // Slate 300 (lighter for contrast)
+                            cyan: '#22d3ee',     // Cyan 400
+                            violet: '#a78bfa',   // Violet 400
+                            rose: '#fb7185',     // Rose 400
+                            blue: '#60a5fa'      // Blue 400
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+
+        /* BACKGROUND IMAGE CONFIGURATION 
+           Replace the URL below with your own image path.
+        */
+        body {
+            /* Placeholder Tech Background */
+            background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-color: #0f172a; /* Fallback color */
+        }
+
+        /* Overlay to ensure text is readable on any image */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85); /* Dark blue overlay with 85% opacity */
+            z-index: -1;
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Chart Container Rules */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Flowchart Connector Lines */
+        .flow-arrow::after {
+            content: '→';
+            font-size: 2rem;
+            color: #94a3b8;
+            position: absolute;
+            right: -2rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        @media (max-width: 768px) {
+            .flow-arrow::after {
+                content: '↓';
+                right: 50%;
+                top: auto;
+                bottom: -2rem;
+                transform: translateX(50%);
+            }
+        }
+    </style>
+    <!-- 
+        Updated for User Request:
+        1. Background Image support
+        2. Logo Placeholder
+        3. Glassmorphism styling (transparent backgrounds)
+        
+        NO SVG USED. NO MERMAID USED.
+    -->
+</head>
+<body class="text-seismic-text font-sans leading-relaxed selection:bg-seismic-cyan selection:text-slate-900">
+
+    <!-- Background Overlay Div -->
+    <div class="bg-overlay"></div>
+
+    <!-- Header Section -->
+    <header class="w-full py-12 px-4 text-center border-b border-white/10 relative z-10">
+        <div class="max-w-4xl mx-auto flex flex-col items-center">
+            
+            <!-- LOGO PLACEHOLDER -->
+            <!-- Replace 'src' with your logo file. Using a placeholder for now. -->
+            <div class="mb-6 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                <img src="https://via.placeholder.com/200x60/000000/FFFFFF?text=YOUR+LOGO+HERE" 
+                     alt="Seismic Systems Logo" 
+                     class="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition-opacity">
+            </div>
+
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-4 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-seismic-cyan via-seismic-blue to-seismic-violet drop-shadow-lg">
+                SEISMIC SYSTEMS
+            </h1>
+            <p class="text-xl md:text-2xl text-seismic-muted font-light drop-shadow-md">
+                The Privacy Layer the EVM Was Waiting For
+            </p>
+            <div class="mt-8 flex justify-center space-x-4">
+                <span class="px-4 py-2 rounded-full bg-seismic-card/50 border border-seismic-cyan/50 text-seismic-cyan text-sm font-bold uppercase tracking-wider backdrop-blur-md shadow-[0_0_15px_rgba(34,211,238,0.3)]">
+                    Encrypted L1
+                </span>
+                <span class="px-4 py-2 rounded-full bg-seismic-card/50 border border-seismic-violet/50 text-seismic-violet text-sm font-bold uppercase tracking-wider backdrop-blur-md shadow-[0_0_15px_rgba(167,139,250,0.3)]">
+                    100% EVM
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 relative z-10">
+
+        <!-- SECTION 1: The Transparency Paradox -->
+        <section class="col-span-1 md:col-span-2 glass-card rounded-2xl shadow-2xl overflow-hidden">
+            <div class="p-8 md:p-12">
+                <h2 class="text-3xl font-bold mb-6 text-seismic-cyan drop-shadow-md">The Transparency Paradox</h2>
+                <p class="text-lg text-gray-200 mb-8 max-w-3xl">
+                    For years, total transparency was considered blockchain's greatest feature. However, for institutional finance and complex gaming, it is a critical vulnerability. Public visibility allows for <strong>predatory front-running (MEV)</strong> and exposes proprietary trading strategies.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <div class="chart-container">
+                            <canvas id="mevChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-seismic-muted mt-4">
+                            Annual losses due to MEV and Front-running on standard transparent chains vs. Seismic.
+                        </p>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="bg-black/40 p-6 rounded-xl border-l-4 border-seismic-rose backdrop-blur-sm">
+                            <h3 class="font-bold text-xl mb-2 text-white">Standard EVM Chain</h3>
+                            <ul class="list-disc list-inside text-gray-300 space-y-2">
+                                <li>All variables visible publicly</li>
+                                <li>Strategies exposed instantly</li>
+                                <li>Subject to "Sandwich Attacks"</li>
+                            </ul>
+                        </div>
+                        <div class="bg-black/40 p-6 rounded-xl border-l-4 border-seismic-cyan backdrop-blur-sm">
+                            <h3 class="font-bold text-xl mb-2 text-white">Seismic Systems</h3>
+                            <ul class="list-disc list-inside text-gray-300 space-y-2">
+                                <li>Variables marked <code class="text-seismic-cyan">private</code></li>
+                                <li>Encrypted Mempool</li>
+                                <li>Zero Front-running potential</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Architecture -->
+        <section class="col-span-1 md:col-span-2">
+            <h2 class="text-3xl font-bold mb-6 text-seismic-violet text-center drop-shadow-md">Under the Hood: How It Works</h2>
+            <p class="text-center text-gray-200 max-w-2xl mx-auto mb-12">
+                Seismic leverages <strong>Trusted Execution Environments (TEEs)</strong> to process data without revealing it. The data exists in a decrypted state for only milliseconds inside a secure hardware enclave.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+                <!-- Step 1 -->
+                <div class="flow-arrow relative glass-card p-8 rounded-xl hover:bg-white/5 hover:border-seismic-cyan transition-all duration-300">
+                    <div class="text-4xl mb-4 text-shadow-glow">🔒</div>
+                    <h3 class="text-xl font-bold text-seismic-cyan mb-2">1. Encrypted Inputs</h3>
+                    <p class="text-gray-300 text-sm">Users submit transactions where the payload is fully encrypted. No observer can see the intent.</p>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="flow-arrow relative glass-card p-8 rounded-xl hover:bg-white/5 hover:border-seismic-violet transition-all duration-300">
+                    <div class="text-4xl mb-4 text-shadow-glow">⚙️</div>
+                    <h3 class="text-xl font-bold text-seismic-violet mb-2">2. TEE Processing</h3>
+                    <p class="text-gray-300 text-sm">Validators process logic inside a secure hardware "Black Box". Data is decrypted ONLY here.</p>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="relative glass-card p-8 rounded-xl hover:bg-white/5 hover:border-seismic-rose transition-all duration-300">
+                    <div class="text-4xl mb-4 text-shadow-glow">✅</div>
+                    <h3 class="text-xl font-bold text-seismic-rose mb-2">3. Public Proofs</h3>
+                    <p class="text-gray-300 text-sm">The network updates the state and publishes a validity proof. The data remains hidden.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Developer Experience -->
+        <section class="col-span-1 glass-card rounded-2xl shadow-xl p-8">
+            <h2 class="text-2xl font-bold mb-4 text-seismic-blue drop-shadow-md">Developer Experience (DX)</h2>
+            <p class="text-gray-300 mb-6 text-sm">
+                Unlike ZK-based privacy solutions that require learning new languages (Circom, Cairo), Seismic is <strong>100% EVM compatible</strong>. If you know Solidity, you know Seismic.
+            </p>
+            <div class="chart-container">
+                <canvas id="devRadarChart"></canvas>
+            </div>
+            <p class="text-center text-xs text-gray-400 mt-4">
+                Comparison of development friction and capabilities.
+            </p>
+        </section>
+
+        <!-- SECTION 4: Use Case - DeFi -->
+        <section class="col-span-1 glass-card rounded-2xl shadow-xl p-8">
+            <h2 class="text-2xl font-bold mb-4 text-seismic-cyan drop-shadow-md">Confidential DeFi</h2>
+            <p class="text-gray-300 mb-6 text-sm">
+                Seismic enables <strong>Dark Pools</strong>—exchanges where order books are hidden. This prevents slippage caused by the market reacting to your trade before it settles.
+            </p>
+            <div class="chart-container">
+                <canvas id="slippageChart"></canvas>
+            </div>
+            <p class="text-center text-xs text-gray-400 mt-4">
+                Price impact (Slippage) on large orders: Standard DEX vs. Seismic Dark Pool.
+            </p>
+        </section>
+
+        <!-- SECTION 5: Use Case - Gaming (Fog of War) -->
+        <section class="col-span-1 md:col-span-2 glass-card rounded-2xl shadow-xl p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h2 class="text-2xl font-bold mb-4 text-seismic-rose drop-shadow-md">Information Asymmetric Gaming</h2>
+                    <p class="text-gray-300 mb-4">
+                        True on-chain strategy games require hidden information ("Fog of War"). On standard chains, anyone can read the map data. On Seismic, map tiles can be <strong>private state</strong>.
+                    </p>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-seismic-rose mr-2 shadow-[0_0_8px_rgba(251,113,133,0.6)]"></span>
+                            <span>Standard Chain: Map fully revealed (Cheating possible)</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-seismic-cyan mr-2 shadow-[0_0_8px_rgba(34,211,238,0.6)]"></span>
+                            <span>Seismic: Tiles encrypted until explored</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-seismic-violet mr-2 shadow-[0_0_8px_rgba(167,139,250,0.6)]"></span>
+                            <span>Enables Poker, RTS, and 4X Strategy games</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- CSS Grid Map Visualization -->
+                <div class="flex flex-col items-center justify-center">
+                    <div class="grid grid-cols-5 gap-1 p-2 bg-black/60 rounded-lg shadow-inner border border-white/10" style="width: 250px; height: 250px;">
+                        <!-- Row 1 -->
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-seismic-cyan rounded shadow-[0_0_15px_rgba(34,211,238,0.8)] flex items-center justify-center text-black font-bold text-xs">P1</div>
+                        <div class="bg-white/10 rounded"></div>
+                        <!-- Row 2 -->
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-gray-800 rounded flex items-center justify-center border border-gray-600 text-[10px] text-gray-500">?</div>
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-white/10 rounded"></div>
+                        <!-- Row 3 -->
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-gray-800 rounded flex items-center justify-center border border-gray-600 text-[10px] text-gray-500">?</div>
+                        <div class="bg-seismic-rose rounded shadow-[0_0_15px_rgba(251,113,133,0.8)] flex items-center justify-center text-black font-bold text-xs">P2</div>
+                        <div class="bg-gray-800 rounded flex items-center justify-center border border-gray-600 text-[10px] text-gray-500">?</div>
+                        <div class="bg-white/10 rounded"></div>
+                        <!-- Row 4 -->
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-gray-800 rounded flex items-center justify-center border border-gray-600 text-[10px] text-gray-500">?</div>
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-white/10 rounded"></div>
+                        <!-- Row 5 -->
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-white/10 rounded"></div>
+                        <div class="bg-white/10 rounded"></div>
+                    </div>
+                    <p class="text-xs font-mono text-seismic-cyan mt-2 drop-shadow">Visualizing Encrypted State (Fog of War)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: Ecosystem & Funding -->
+        <section class="col-span-1 md:col-span-2">
+            <h2 class="text-2xl font-bold mb-8 text-center text-white drop-shadow-md">Backed by Industry Titans</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Funding Chart -->
+                <div class="glass-card rounded-2xl shadow-xl p-6 flex flex-col items-center">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-200">Total Funding: $17M</h3>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="fundingChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Investors List -->
+                <div class="glass-card rounded-2xl shadow-xl p-6 flex flex-col justify-center">
+                    <h3 class="text-lg font-semibold mb-6 text-gray-200">Key Investors</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-black/50 p-4 rounded-lg text-center border border-white/10 hover:border-seismic-blue/50 transition-colors">
+                            <span class="text-xl font-bold text-seismic-blue block">a16z</span>
+                            <span class="block text-xs text-gray-400 uppercase tracking-widest mt-1">Crypto</span>
+                        </div>
+                        <div class="bg-black/50 p-4 rounded-lg text-center border border-white/10 hover:border-seismic-violet/50 transition-colors">
+                            <span class="text-xl font-bold text-seismic-violet block">Polychain</span>
+                            <span class="block text-xs text-gray-400 uppercase tracking-widest mt-1">Capital</span>
+                        </div>
+                        <div class="bg-black/50 p-4 rounded-lg text-center border border-white/10 hover:border-white/50 transition-colors">
+                            <span class="text-xl font-bold text-white block">NGC</span>
+                            <span class="block text-xs text-gray-400 uppercase tracking-widest mt-1">Ventures</span>
+                        </div>
+                        <div class="bg-black/50 p-4 rounded-lg text-center border border-white/10 hover:border-seismic-cyan/50 transition-colors">
+                            <span class="text-xl font-bold text-seismic-cyan block">Alliance</span>
+                            <span class="block text-xs text-gray-400 uppercase tracking-widest mt-1">DAO</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-card border-t border-white/10 py-12 text-center mt-12 relative z-10">
+        <h3 class="text-2xl font-bold text-white mb-6 drop-shadow-md">Ready to Build the Unseen?</h3>
+        <div class="flex justify-center space-x-6 mb-8">
+            <a href="#" class="px-6 py-3 bg-seismic-cyan hover:bg-cyan-400 text-black font-bold rounded-lg transition-colors shadow-lg shadow-cyan-500/30">Read Docs</a>
+            <a href="#" class="px-6 py-3 bg-white/5 border border-seismic-violet hover:bg-seismic-violet/20 text-seismic-violet font-bold rounded-lg transition-colors shadow-lg shadow-violet-500/20 backdrop-blur-sm">Join Testnet</a>
+        </div>
+        <p class="text-gray-400 text-sm">© 2025 Seismic Systems. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Chart Configuration Script -->
+    <script>
+        // --- UTILITIES ---
+        // Label wrapping helper function (Mandatory)
+        function wrapLabel(str, maxLen = 16) {
+            if (typeof str !== 'string') return str;
+            if (str.length <= maxLen) return str;
+            const words = str.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if (currentLine.length + 1 + words[i].length <= maxLen) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        // Common Tooltip Options (Mandatory)
+        const commonTooltip = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        // Common Chart Defaults - Adjusted for dark/glass theme
+        Chart.defaults.color = '#cbd5e1'; // Lighter text for better contrast
+        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)'; // Subtle grid lines
+        Chart.defaults.font.family = 'Inter';
+
+        // --- CHART 1: MEV Losses (Bar) ---
+        const ctxMev = document.getElementById('mevChart').getContext('2d');
+        new Chart(ctxMev, {
+            type: 'bar',
+            data: {
+                labels: ['Standard EVM Chain', 'Seismic Systems'].map(l => wrapLabel(l)),
+                datasets: [{
+                    label: 'Potential Value Lost to MEV (High Volatility)',
+                    data: [85, 0], // Hypothetical 85% loss efficiency vs 0
+                    backgroundColor: ['rgba(251, 113, 133, 0.9)', 'rgba(34, 211, 238, 0.9)'], // Rose vs Cyan (high opacity)
+                    borderWidth: 0,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: commonTooltip,
+                    title: {
+                        display: true,
+                        text: 'Risk of Value Extraction (Index)',
+                        color: '#f8fafc'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#cbd5e1' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#cbd5e1' }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 2: Developer Experience (Radar) ---
+        const ctxRadar = document.getElementById('devRadarChart').getContext('2d');
+        new Chart(ctxRadar, {
+            type: 'radar',
+            data: {
+                labels: ['EVM Compatibility', 'Privacy Level', 'Ease of Use', 'Performance', 'Tooling Support'].map(l => wrapLabel(l)),
+                datasets: [{
+                    label: 'Seismic Systems',
+                    data: [100, 95, 90, 85, 90],
+                    backgroundColor: 'rgba(34, 211, 238, 0.3)', // Cyan transparent
+                    borderColor: '#22d3ee',
+                    pointBackgroundColor: '#22d3ee',
+                    borderWidth: 2
+                }, {
+                    label: 'ZK Rollups',
+                    data: [60, 95, 40, 70, 50], // Lower Ease of Use/Compat
+                    backgroundColor: 'rgba(167, 139, 250, 0.3)', // Violet transparent
+                    borderColor: '#a78bfa',
+                    pointBackgroundColor: '#a78bfa',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        position: 'bottom',
+                        labels: { color: '#f8fafc' }
+                    },
+                    tooltip: commonTooltip
+                },
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        pointLabels: { color: '#f8fafc', font: { size: 11, weight: 'bold' } },
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        ticks: { display: false, backdropColor: 'transparent' } // Hide numbers on axis for cleaner look
+                    }
+                }
+            }
+        });
+
+        // --- CHART 3: Slippage in Dark Pools (Line) ---
+        const ctxSlippage = document.getElementById('slippageChart').getContext('2d');
+        new Chart(ctxSlippage, {
+            type: 'line',
+            data: {
+                labels: ['10k', '50k', '100k', '500k', '1M'].map(l => wrapLabel(l + ' Order Size')),
+                datasets: [{
+                    label: 'Standard DEX (Slippage)',
+                    data: [0.1, 0.5, 1.2, 3.5, 8.0],
+                    borderColor: '#fb7185', // Rose
+                    backgroundColor: 'rgba(251, 113, 133, 0.1)',
+                    tension: 0.4,
+                    borderWidth: 3,
+                    fill: true
+                }, {
+                    label: 'Seismic Dark Pool',
+                    data: [0.1, 0.1, 0.15, 0.2, 0.3], // Minimal impact
+                    borderColor: '#22d3ee', // Cyan
+                    backgroundColor: 'rgba(34, 211, 238, 0.1)',
+                    tension: 0.4,
+                    borderWidth: 3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        position: 'bottom',
+                        labels: { color: '#f8fafc' }
+                    },
+                    tooltip: commonTooltip,
+                    title: { display: true, text: 'Price Impact (%) vs Order Size', color: '#f8fafc' }
+                },
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        title: { display: true, text: 'Slippage (%)', color: '#cbd5e1' },
+                        ticks: { color: '#cbd5e1' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#cbd5e1' }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 4: Funding (Doughnut) ---
+        const ctxFunding = document.getElementById('fundingChart').getContext('2d');
+        new Chart(ctxFunding, {
+            type: 'doughnut',
+            data: {
+                labels: ['Seed Round (2025)', 'Series A (2025)'].map(l => wrapLabel(l)),
+                datasets: [{
+                    data: [7, 10], // $7M and $10M
+                    backgroundColor: ['rgba(96, 165, 250, 0.9)', 'rgba(167, 139, 250, 0.9)'], // Blue and Violet high opacity
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderWidth: 1,
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        position: 'bottom',
+                        labels: { color: '#f8fafc' }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: commonTooltip.callbacks.title,
+                            label: function(context) {
+                                return context.label + ': $' + context.raw + 'M';
+                            }
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+    </script>
+</body>
+</html>
